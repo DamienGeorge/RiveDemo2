@@ -6,14 +6,15 @@
     <title>Rive Animation Display</title>
     <style>
         body {
-            margin: 0;
+            margin: 0px;
             padding: 0px;
             font-family: Arial, sans-serif;
             background-color: #f0f0f0;
             display: flex;
-            flex-direction: row;
+            flex-direction: column;
             align-items: center;
             min-height: 100vh;
+            width: 100vw;
             justify-content: center;
         }
 
@@ -22,20 +23,18 @@
         }
 
         #rive-canvas-controls {
-            background: rgba(216, 216, 216); /* dark glassy grey */
-            margin: 1vh;
-            width: 30vw;
-            height: calc(30vw * 4.6/5.2);
+            background: rgba(216, 216, 245); /* dark glassy grey */
+            width: 29vw;
+            height: 100vh
         }
 
         #rive-canvas {
             width: 70vw;
             height: calc(70vw * 98/267);
             display: block;
-            border: 1vh solid transparent;
+            /* border: 1vh solid transparent;
             border-image: url('Rectangle 30.png') 50 round;
-            border-image-outset: 0;
-            margin: 1vh;
+            border-image-outset: 0; */
         }
 
         .row {
@@ -43,9 +42,10 @@
             display: flex;
             flex-direction: row;
             align-items: flex-start;
-            width: 100vw;
+            width: 100%;
             justify-content: center;
             height: 100vh;
+            padding: 1vh;
         }
 
 
