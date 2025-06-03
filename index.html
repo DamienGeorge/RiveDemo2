@@ -7,27 +7,56 @@
     <style>
         body {
             margin: 0;
-            padding: 20px;
+            padding: 0px;
             font-family: Arial, sans-serif;
             background-color: #f0f0f0;
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             align-items: center;
             min-height: 100vh;
             justify-content: center;
         }
 
-        #rive-canvas {
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            background: white;
+        .canvas{
+            background: rgba(216, 216, 216);
         }
+
+        #rive-canvas-controls {
+            background: rgba(216, 216, 216); /* dark glassy grey */
+            margin: 1vh;
+            width: 30vw;
+            height: calc(30vw * 4.6/5.2);
+        }
+
+        #rive-canvas {
+            width: 70vw;
+            height: calc(70vw * 98/267);
+            display: block;
+            border: 1vh solid transparent;
+            border-image: url('Rectangle 30.png') 50 round;
+            border-image-outset: 0;
+            margin: 1vh;
+        }
+
+        .row {
+            background: rgba(216, 216, 216);
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            width: 100vw;
+            justify-content: center;
+            height: 100vh;
+        }
+
+
     </style>
 </head>
 <body>
-    <canvas id="rive-canvas" width="800" height="600"></canvas>
-    <script src="https://unpkg.com/@rive-app/canvas"></script>
+    <div class="row">
+        <canvas id="rive-canvas"></canvas>
+        <canvas id="rive-canvas-controls"></canvas>
+    </div>
+    <script src="https://unpkg.com/@rive-app/WebGL2"></script>
     <script src="scriptButtonTesting.js"></script>
 </body>
 </html> 
