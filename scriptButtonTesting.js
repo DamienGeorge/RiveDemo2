@@ -82,11 +82,6 @@ try {
         .matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`)
         .addEventListener("change", computeSize);
 
-    riveControlsInstance.layout = new rive.Layout({
-        fit: rive.Fit.ScaleDown
-        /* ,alignment: rive.Alignment.Center  */
-    });
-
     riveInstance = new rive.Rive({
         src: 'time_main_r5.riv',
         canvas: canvas,
@@ -281,6 +276,9 @@ function OnRiveEventTriggered(event) {
             break;
         case 'D6 Arrivals':
             fireTrigger(TrArrivals);
+            break;
+        case 'Slider':
+            inputs.find(i => i.name === 'Slider speed').
             break;
         // Add more cases as needed
     }
