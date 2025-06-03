@@ -64,19 +64,28 @@ try {
         onLoad: () => {
             console.log('Rive animation loaded successfully');
             // Fit the animation to the canvas
-            riveControlsInstance.resizeDrawingSurfaceToCanvas();
+            computeSize();
 
             //this is how to access the autobind instance
             let boundInstance = riveInstance.ViewModelInstance;
         },
         onLoadError: (error) => {
             console.error('Failed to load Rive animation:', error);
-            alert('Failed to load the Rive animation. Please check if menu_test.riv exists.');
         }
     });
 
-    riveControlsInstance.layout = new rive.Layout({  fit: rive.Fit.Contain,
-        alignment: rive.Alignment.Center });
+    function computeSize() {
+        riveControlsInstance.resizeDrawingSurfaceToCanvas();
+    }
+
+    window
+        .matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`)
+        .addEventListener("change", computeSize);
+
+    riveControlsInstance.layout = new rive.Layout({
+        fit: rive.Fit.ScaleDown
+        /* ,alignment: rive.Alignment.Center  */
+    });
 
     riveInstance = new rive.Rive({
         src: 'time_main_r5.riv',
@@ -97,7 +106,7 @@ try {
             const viewModelInstance = riveInstance.viewModelInstance;
 
             const location = viewModelInstance.string('City Name');
-            
+
             inputs = riveInstance.stateMachineInputs(stateMachine);
             console.log(inputs);
 
@@ -197,10 +206,10 @@ try {
                     }
                 }
 
-                /* // Only call toggleLayout in automatic mode
+                // Only call toggleLayout in automatic mode
                 if (isAutomaticMode) {
                     toggleLayout(date);
-                } */
+                }
             }
             // --- END Time/Date/Weather update function ---
 
@@ -236,44 +245,48 @@ window.addEventListener('resize', () => {
 
 function OnRiveEventTriggered(event) {
     console.log(event.data.name);
-    if (event.data.name === 'Weather') {
-        fireTrigger(EnableWeatherEffectsTriggerName);
+    switch (event.data.name) {
+        case 'Weather':
+            fireTrigger(EnableWeatherEffectsTriggerName);
+            break;
+        case 'Sky':
+            fireTrigger(EnableSkyTriggerName);
+            break;
+        case 'W2 Sunny':
+            fireTrigger(SkySunnyTriggerName);
+            break;
+        case 'W3 Rainy':
+            fireTrigger(SkyRainTriggerName);
+            break;
+        case 'Layout V':
+            fireTrigger(LayoutVTriggerName);
+            break;
+        case 'Layout H':
+            fireTrigger(LayoutHTriggerName);
+            break;
+        case 'D1 Timings':
+            fireTrigger(TrTimeTable);
+            break;
+        case 'D2 Emergency':
+            fireTrigger(TrEmergency);
+            break;
+        case 'D3 Transport':
+            fireTrigger(TrTransport);
+            break;
+        case 'D4 Explore':
+            fireTrigger(TrImages);
+            break;
+        case 'D5 Weather':
+            fireTrigger(TrWeather);
+            break;
+        case 'D6 Arrivals':
+            fireTrigger(TrArrivals);
+            break;
+        // Add more cases as needed
     }
-    if (event.data.name === 'Sky') {
-        fireTrigger(EnableSkyTriggerName);
-    }
-    if (event.data.name === 'W2 Sunny') {
-        fireTrigger(SkySunnyTriggerName);
-    }
-    if (event.data.name === 'W3 Rainy') {
-        fireTrigger(SkyRainTriggerName);
-    }
-    if (event.data.name === 'Layout V') {
-        fireTrigger(LayoutVTriggerName);
-    }
-    if (event.data.name === 'Layout H') {
-        fireTrigger(LayoutHTriggerName);
-    }
-    if (event.data.name === 'D1 Timings') {
-        fireTrigger(TrTimeTable);
-    }
-    if (event.data.name === 'D2 Emergency') {
-        fireTrigger(TrEmergency);
-    }
-    if (event.data.name === 'D3 Transport') {
-        fireTrigger(TrTransport);
-    }
-    if (event.data.name === 'D4 Weather') {
-        fireTrigger(TrWeather);
-    }
-    if (event.data.name === 'D5 Images') {
-        fireTrigger(TrImages);
-    }  
-    
 }
 
 function fireTrigger(triggerName) {
-
     if (inputs) {
         const trigger = inputs.find(i => i.name === triggerName);
         console.log(trigger);
