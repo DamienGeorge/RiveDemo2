@@ -25,6 +25,7 @@ let IsSpedUp = false;
 
 //#region Constants
 const stateMachine = "Main state machine";
+const controlsStateMachine = "State Machine 1";
 const toggleInterval = 5; //Determines how often the layout toggles
 
 const slider = document.getElementById('timeSlider');
@@ -47,6 +48,7 @@ const trScreens = ['Tr Timetable', 'Tr Emergency', 'Tr Images', 'Tr Transport', 
 //#endregion
 
 let inputs = null;
+let consoleInputs = null;
 
 try {
     // Get the canvas element
@@ -60,12 +62,13 @@ try {
         autoplay: true,
         autoBind: true,
         artboard: "Button Testing Main",
-        stateMachines: 'State Machine 1', // This ensures that animation is playing
+        stateMachines: controlsStateMachine, // This ensures that animation is playing
         onLoad: () => {
             console.log('Rive animation loaded successfully');
             // Fit the animation to the canvas
             computeSize();
 
+            consoleInputs = riveControlsInstance.stateMachineInputs(controlsStateMachine);
             //this is how to access the autobind instance
             let boundInstance = riveInstance.ViewModelInstance;
         },
@@ -278,8 +281,29 @@ function OnRiveEventTriggered(event) {
             fireTrigger(TrArrivals);
             break;
         case 'Slider':
-            inputs.find(i => i.name === 'Slider speed').
+            const sliderSpeed = consoleInputs.find(i => i.name === 'Slider speed')
+            console.log(sliderSpeed);
+            updateSpeedSwitch(sliderSpeed.value);
             break;
+        case 'Auto/Manual':
+            const isAutoInput = consoleInputs.find(i => i.name === 'isAuto')
+            console.log(isAutoInput.value);
+            if (isAutoInput.value) {
+                isAutomaticMode = true;
+            } else {
+                isAutomaticMode = false;
+            }
+            break;
+        case 'Main/Detail Layout':
+            const mainDetailLayoutInput = consoleInputs.find(i => i.name === 'isMain')
+            console.log(mainDetailLayoutInput.value);
+            if (mainDetailLayoutInput.value) {
+                isStandardLayout = true;
+                fireTrigger(LayoutHTriggerName);
+            } else {
+                isStandardLayout = false;
+                fireTrigger(LayoutVTriggerName);
+            }
         // Add more cases as needed
     }
 }
