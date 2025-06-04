@@ -48,6 +48,23 @@
             padding: 1vh;
         }
 
+        @media (max-aspect-ratio: 1/1) {
+            .row {
+                flex-direction: column;
+                align-items: center;
+                height: 100vh;
+                width: 100vw;
+            }
+            #rive-canvas, #rive-canvas-controls {
+                width: 90vw;
+                max-width: 100vw;
+                height: auto;
+                margin-bottom: 2vh;
+            }
+            #rive-canvas-controls {
+                height: 40vh;
+            }
+        }
 
     </style>
 </head>
