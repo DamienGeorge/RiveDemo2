@@ -239,6 +239,9 @@ window.addEventListener('resize', () => {
     if (riveInstance) {
         riveInstance.resizeDrawingSurfaceToCanvas();
     }
+    if (riveControlsInstance) {
+        riveControlsInstance.resizeDrawingSurfaceToCanvas();
+    }
 });
 
 function OnRiveEventTriggered(event) {
