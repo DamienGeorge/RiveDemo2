@@ -283,7 +283,7 @@ function OnRiveEventTriggered(event) {
         case 'D6 Arrivals':
             fireTrigger(TrArrivals);
             break;
-        case 'Slider':
+        case 'speed':
             const sliderSpeed = consoleInputs.find(i => i.name === 'Slider speed')
             console.log(sliderSpeed);
             updateSpeedSwitch(sliderSpeed.value);
