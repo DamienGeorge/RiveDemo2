@@ -283,7 +283,7 @@ function OnRiveEventTriggered(event) {
         case 'D6 Arrivals':
             fireTrigger(TrArrivals);
             break;
-        case 'speed':
+        case 'Speed':
             const sliderSpeed = consoleInputs.find(i => i.name === 'Slider speed')
             console.log(sliderSpeed);
             updateSpeedSwitch(sliderSpeed.value);
@@ -295,6 +295,7 @@ function OnRiveEventTriggered(event) {
                 isAutomaticMode = true;
             } else {
                 isAutomaticMode = false;
+                SetLayoutH();
             }
             break;
         case 'Main/Detail Layout':
@@ -309,6 +310,11 @@ function OnRiveEventTriggered(event) {
             }
         // Add more cases as needed
     }
+}
+
+function SetLayoutH() {
+    isStandardLayout = true;
+    fireTrigger(LayoutHTriggerName);
 }
 
 function fireTrigger(triggerName) {
