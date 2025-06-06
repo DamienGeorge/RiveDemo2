@@ -42,6 +42,8 @@ const LayoutHTriggerName = 'Tr Layout H';
 
 const EnableSkyTriggerName = 'Tr Sky color';
 const EnableWeatherEffectsTriggerName = 'Tr Weather effects';
+
+const SwapDetailTriggerName = 'Tr Swap';
 const SkySunnyTriggerName = 'Tr Sunny';
 const SkyRainTriggerName = 'Tr Rain';
 const trScreens = ['Tr Timetable', 'Tr Emergency', 'Tr Images', 'Tr Transport', 'Tr Weather'];
@@ -252,6 +254,9 @@ function OnRiveEventTriggered(event) {
             break;
         case 'Sky':
             fireTrigger(EnableSkyTriggerName);
+            break;
+        case 'W1 Swap detail':
+            fireTrigger(SwapDetailTriggerName);
             break;
         case 'W2 Sunny':
             fireTrigger(SkySunnyTriggerName);
