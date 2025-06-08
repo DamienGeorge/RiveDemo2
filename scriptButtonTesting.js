@@ -59,7 +59,7 @@ try {
 
     // Create Rive instance
     riveControlsInstance = new rive.Rive({
-        src: 'menu_test.riv',
+        src: 'menu_main.riv',
         canvas: controlsCanvas,
         autoplay: true,
         autoBind: true,
@@ -88,7 +88,7 @@ try {
         .addEventListener("change", computeSize);
 
     riveInstance = new rive.Rive({
-        src: 'time_main_r5.riv',
+        src: 'time_main_r6.riv',
         canvas: canvas,
         autoplay: true,
         autoBind: true,
@@ -115,10 +115,7 @@ try {
                 navigator.geolocation.getCurrentPosition(
                     async (position) => {
                         storedPosition = position; // Store the position
-                        const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${position.coords.latitude}&lon=${position.coords.longitude}`);
-                        const data = await response.json();
-                        console.log(data.address.town);
-                        const city = data.address.city || data.address.town;
+                        const city = await getCityFromCoords(position.coords.latitude, position.coords.longitude);
                         location.value = city;
                     },
                     (error) => {
@@ -126,10 +123,7 @@ try {
                             if (result.state === 'granted') {
                                 navigator.geolocation.getCurrentPosition(
                                     async (position) => {
-                                        const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${position.coords.latitude}&lon=${position.coords.longitude}`);
-                                        const data = await response.json();
-                                        console.log(data.address.town);
-                                        const city = data.address.city || data.address.town;
+                                        const city = await getCityFromCoords(position.coords.latitude, position.coords.longitude);
                                         location.value = city;
                                     },
                                     (error) => {
@@ -417,3 +411,15 @@ function speedUpTime() {
     spedUpDate.setMinutes(spedUpDate.getMinutes() + 1);
     window.speedUpTimeout = setTimeout(speedUpTime, timeout);
 }
+
+const apiKey = '600a572faf44492fa416286dccb577ca';
+const getCityFromCoords = async (lat, lon) => {
+    const url = `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lon}&key=${apiKey}`;
+    const response = await fetch(url);
+    const data = await response.json();
+    return data.results[0]?.components.city ||
+        data.results[0]?.components.town ||
+        data.results[0]?.components.village ||
+        data.results[0]?.components.county ||
+        'Bangalore';
+};
