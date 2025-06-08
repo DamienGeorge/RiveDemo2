@@ -26,7 +26,7 @@ let IsSpedUp = false;
 //#region Constants
 const stateMachine = "Main state machine";
 const controlsStateMachine = "State Machine 1";
-const toggleInterval = 5; //Determines how often the layout toggles
+const toggleInterval = 3; //Determines how often the layout toggles
 
 const slider = document.getElementById('timeSlider');
 const sliderValueDisplay = document.getElementById('sliderValue');
@@ -36,6 +36,7 @@ const TrEmergency = 'Tr Emergency';
 const TrImages = 'Tr Images';
 const TrTransport = 'Tr Transport';
 const TrWeather = 'Tr Weather';
+const TrArrivals = 'Tr Arrivals';
 
 const LayoutVTriggerName = 'Tr Layout V';
 const LayoutHTriggerName = 'Tr Layout H';
@@ -46,7 +47,7 @@ const EnableWeatherEffectsTriggerName = 'Tr Weather effects';
 const SwapDetailTriggerName = 'Tr Swap';
 const SkySunnyTriggerName = 'Tr Sunny';
 const SkyRainTriggerName = 'Tr Rain';
-const trScreens = ['Tr Timetable', 'Tr Emergency', 'Tr Images', 'Tr Transport', 'Tr Weather'];
+const trScreens = ['Tr Timetable', 'Tr Emergency', 'Tr Images', 'Tr Transport', 'Tr Weather', 'Tr Arrivals'];
 //#endregion
 
 let inputs = null;
@@ -151,6 +152,7 @@ try {
 
             const minuteInput = viewModelInstance.number('Minute Calc');
             const hourInput = viewModelInstance.number('Hour Calc');
+            const secondInput = viewModelInstance.number('Second Calc');
 
             const yearInput = viewModelInstance.number('Year');
             const monthInput = viewModelInstance.string('Month');
@@ -171,6 +173,7 @@ try {
 
                 minuteInput.value = minute;
                 hourInput.value = hour;
+                secondInput.value = date.getSeconds();
 
                 yearInput.value = date.getFullYear();
                 monthInput.value = date.toLocaleString('default', { month: 'long' });
@@ -279,7 +282,7 @@ function OnRiveEventTriggered(event) {
         case 'D5 Weather':
             fireTrigger(TrWeather);
             break;
-        case 'D6 Arrivals':
+        case 'D6 Train':
             fireTrigger(TrArrivals);
             break;
         case 'Speed':
@@ -327,22 +330,55 @@ function fireTrigger(triggerName) {
 function toggleLayout(date) {
     const currentMinute = date.getMinutes();
 
-    if (date.getMinutes() % toggleInterval === 0 && !layoutToggleMap.has(currentMinute)) {
+    /* if (date.getMinutes() % toggleInterval === 0 && !layoutToggleMap.has(currentMinute)) { */
+    if (!layoutToggleMap.has(currentMinute)) {
         if (IsDemo || (IsDemo == false && date.getSeconds() === 0)) {
 
             console.log(isStandardLayout);
             layoutToggleMap.clear();
             layoutToggleMap.set(currentMinute, true);
 
-            if (isStandardLayout || date.getMinutes() % 10 === 0) {
+            if (date.getMinutes() === 7 || date.getMinutes() === 17 || date.getMinutes() === 27 || date.getMinutes() === 37 || date.getMinutes() === 53) {
                 fireTrigger(LayoutHTriggerName);
                 isStandardLayout = true;
-            } else {
-                console.log('triggering', trScreens[currentTrScreen]);
-                fireTrigger(trScreens[currentTrScreen]);
-                currentTrScreen = (currentTrScreen + 1) % trScreens.length;
             }
-            isStandardLayout = !isStandardLayout;
+            else if (date.getMinutes() % 10 === 0 && date.getMinutes() !== 50) {
+                fireTrigger(SwapDetailTriggerName);
+            }
+            else {
+                fireTrigger(LayoutVTriggerName);
+                isStandardLayout = false;
+
+                switch (date.getMinutes()) {
+                    case 2:
+                        fireTrigger(TrTimeTable);
+                        break;
+                    case 12:
+                        fireTrigger(TrEmergency);
+                        break;
+                    case 22:
+                        fireTrigger(TrTransport);
+                        break;
+                    case 32:
+                        fireTrigger(TrArrivals);
+                        break;
+                    case 42:
+                        fireTrigger(TrImages);
+                        break;
+                    case 47:
+                        fireTrigger(TrWeather);
+                        break;
+                }
+            }
+            /*  if (isStandardLayout || date.getMinutes() % 10 === 0) {
+                 fireTrigger(LayoutHTriggerName);
+                 isStandardLayout = true;
+             } else {
+                 console.log('triggering', trScreens[currentTrScreen]);
+                 fireTrigger(trScreens[currentTrScreen]);
+                 currentTrScreen = (currentTrScreen + 1) % trScreens.length;
+             }
+             isStandardLayout = !isStandardLayout; */
             lastToggledDate = date;
 
         }
