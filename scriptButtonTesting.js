@@ -327,8 +327,19 @@ function fireTrigger(triggerName) {
     }
 }
 
+const isSunny = false;
 function toggleLayout(date) {
     const currentMinute = date.getMinutes();
+
+    //Add logic for sunny weather during day
+    if (isSunny === false && date.getHours() >= 7 && date.getHours() <= 17) {
+        fireTrigger(SkySunnyTriggerName);
+        isSunny = true;
+    }
+    else if (isSunny === true && (date.getHours() < 7 || date.getHours() > 17)) {
+        fireTrigger(SkyRainTriggerName);
+        isSunny = false;
+    }
 
     /* if (date.getMinutes() % toggleInterval === 0 && !layoutToggleMap.has(currentMinute)) { */
     if (!layoutToggleMap.has(currentMinute)) {
@@ -338,18 +349,18 @@ function toggleLayout(date) {
             layoutToggleMap.clear();
             layoutToggleMap.set(currentMinute, true);
 
-            if (date.getMinutes() === 7 || date.getMinutes() === 17 || date.getMinutes() === 27 || date.getMinutes() === 37 || date.getMinutes() === 53) {
+            if (currentMinute === 7 || currentMinute === 17 || currentMinute === 27 || currentMinute === 37 || currentMinute === 53) {
                 fireTrigger(LayoutHTriggerName);
                 isStandardLayout = true;
             }
-            else if (date.getMinutes() % 10 === 0 && date.getMinutes() !== 50) {
+            else if (currentMinute % 10 === 0 && currentMinute !== 50) {
                 fireTrigger(SwapDetailTriggerName);
             }
             else {
                 fireTrigger(LayoutVTriggerName);
                 isStandardLayout = false;
 
-                switch (date.getMinutes()) {
+                switch (currentMinute) {
                     case 2:
                         fireTrigger(TrTimeTable);
                         break;
