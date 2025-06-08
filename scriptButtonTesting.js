@@ -357,27 +357,30 @@ function toggleLayout(date) {
                 fireTrigger(SwapDetailTriggerName);
             }
             else {
-                fireTrigger(LayoutVTriggerName);
-                isStandardLayout = false;
-
                 switch (currentMinute) {
                     case 2:
                         fireTrigger(TrTimeTable);
+                        isStandardLayout = false;
                         break;
                     case 12:
                         fireTrigger(TrEmergency);
+                        isStandardLayout = false;
                         break;
                     case 22:
                         fireTrigger(TrTransport);
+                        isStandardLayout = false;
                         break;
                     case 32:
                         fireTrigger(TrArrivals);
+                        isStandardLayout = false;
                         break;
                     case 42:
                         fireTrigger(TrImages);
+                        isStandardLayout = false;
                         break;
                     case 47:
                         fireTrigger(TrWeather);
+                        isStandardLayout = false;
                         break;
                 }
             }
