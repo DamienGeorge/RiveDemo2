@@ -173,7 +173,7 @@ try {
 
                 minuteInput.value = minute;
                 hourInput.value = hour;
-                secondInput.value = date.getSeconds();
+                secondInput.value = date.getSeconds()/100;
 
                 yearInput.value = date.getFullYear();
                 monthInput.value = date.toLocaleString('default', { month: 'long' });
