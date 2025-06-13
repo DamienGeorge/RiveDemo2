@@ -174,8 +174,8 @@ try {
 
                 minuteInput.value = minute;
                 hourInput.value = hour;
-                secondInput.value = date.getSeconds()/100;
-                minSecInput.value = minute + (date.getSeconds()/100);
+                secondInput.value = date.getSeconds() / 100;
+                minSecInput.value = minute + (date.getSeconds() / 100);
 
                 yearInput.value = date.getFullYear();
                 monthInput.value = date.toLocaleString('default', { month: 'long' });
@@ -329,22 +329,23 @@ function fireTrigger(triggerName) {
     }
 }
 
-const isSunny = false;
+let isSunny = false;
 function toggleLayout(date) {
     const currentMinute = date.getMinutes();
 
     //Add logic for sunny weather during day
-    if (isSunny === false && date.getHours() >= 7 && date.getHours() <= 17) {
+    if (isSunny === false && 7 <= date.getHours() <= 17) {
         fireTrigger(SkySunnyTriggerName);
         isSunny = true;
     }
-    else if (isSunny === true && (date.getHours() < 7 || date.getHours() > 17)) {
+    else if (isSunny === true && (7 > date.getHours() > 17)) {
         fireTrigger(SkyRainTriggerName);
         isSunny = false;
     }
 
     /* if (date.getMinutes() % toggleInterval === 0 && !layoutToggleMap.has(currentMinute)) { */
     if (!layoutToggleMap.has(currentMinute)) {
+        console.log("Works in Sunny", date.getHours());
         if (IsDemo || (IsDemo == false && date.getSeconds() === 0)) {
 
             console.log(isStandardLayout);
