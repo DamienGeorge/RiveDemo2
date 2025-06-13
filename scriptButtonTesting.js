@@ -11,6 +11,7 @@ let isStandardLayout = false;
 
 let isAutomaticMode = true;
 let toggleIntervalId = null;
+let isSunny = false;
 //#endregion
 
 //region Global Variables
@@ -174,8 +175,9 @@ try {
 
                 minuteInput.value = minute;
                 hourInput.value = hour;
-                secondInput.value = date.getSeconds() / 100;
-                minSecInput.value = minute + (date.getSeconds() / 100);
+                secondInput.value = date.getSeconds()/100;
+                minSecInput.value = minute + (date.getSeconds()/100);
+                console.log("MinSec", minSecInput.value);
 
                 yearInput.value = date.getFullYear();
                 monthInput.value = date.toLocaleString('default', { month: 'long' });
@@ -183,7 +185,7 @@ try {
                 dateInput.value = date.getDate();
 
                 // Get weather data and update temperature
-                const temperatureInput = viewModelInstance.number('Temperature');
+               /*  const temperatureInput = viewModelInstance.number('Temperature');
                 if (storedPosition) { // Use stored position instead of requesting again
                     const lastWeatherUpdate = localStorage.getItem('lastWeatherUpdate') || '0';
                     const currentTime = new Date().getTime();
@@ -203,7 +205,7 @@ try {
                                 console.log('Error fetching weather data:', error);
                             });
                     }
-                }
+                } */
 
                 // Only call toggleLayout in automatic mode
                 if (isAutomaticMode) {
@@ -329,23 +331,21 @@ function fireTrigger(triggerName) {
     }
 }
 
-let isSunny = false;
 function toggleLayout(date) {
     const currentMinute = date.getMinutes();
 
     //Add logic for sunny weather during day
-    if (isSunny === false && 7 <= date.getHours() <= 17) {
+    if (isSunny === false && date.getHours() >= 7 && date.getHours() <= 17) {
         fireTrigger(SkySunnyTriggerName);
         isSunny = true;
     }
-    else if (isSunny === true && (7 > date.getHours() > 17)) {
+    else if (isSunny === true && (date.getHours() < 7 || date.getHours() > 17)) {
         fireTrigger(SkyRainTriggerName);
         isSunny = false;
     }
 
     /* if (date.getMinutes() % toggleInterval === 0 && !layoutToggleMap.has(currentMinute)) { */
     if (!layoutToggleMap.has(currentMinute)) {
-        console.log("Works in Sunny", date.getHours());
         if (IsDemo || (IsDemo == false && date.getSeconds() === 0)) {
 
             console.log(isStandardLayout);
