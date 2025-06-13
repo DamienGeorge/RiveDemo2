@@ -176,7 +176,7 @@ try {
                 minuteInput.value = minute;
                 hourInput.value = hour;
                 secondInput.value = date.getSeconds()/100;
-                minSecInput.value = minute + (date.getSeconds()/100);
+                minSecInput.value = minute + ((new Date()).getSeconds()/100);
                 console.log("MinSec", minSecInput.value);
 
                 yearInput.value = date.getFullYear();
