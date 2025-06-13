@@ -89,7 +89,7 @@ try {
         .addEventListener("change", computeSize);
 
     riveInstance = new rive.Rive({
-        src: 'time_main_r6.riv',
+        src: 'time_main_r7.riv',
         canvas: canvas,
         autoplay: true,
         autoBind: true,
@@ -153,6 +153,7 @@ try {
             const minuteInput = viewModelInstance.number('Minute Calc');
             const hourInput = viewModelInstance.number('Hour Calc');
             const secondInput = viewModelInstance.number('Second Calc');
+            const minSecInput = viewModelInstance.number('MinSec Calc');
 
             const yearInput = viewModelInstance.number('Year');
             const monthInput = viewModelInstance.string('Month');
@@ -174,6 +175,7 @@ try {
                 minuteInput.value = minute;
                 hourInput.value = hour;
                 secondInput.value = date.getSeconds()/100;
+                minSecInput.value = minute + (date.getSeconds()/100);
 
                 yearInput.value = date.getFullYear();
                 monthInput.value = date.toLocaleString('default', { month: 'long' });
