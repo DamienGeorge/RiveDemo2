@@ -332,7 +332,11 @@ function fireTrigger(triggerName) {
         // Add vibration feedback if supported
         if ('vibrate' in navigator) {
             // Short vibration for button press
-            navigator.vibrate(50);
+            navigator.vibrate(200);
+            console.log("Vibration supported");
+        }
+        else{
+            console.log("Vibration not supported");
         }
     }
 }
