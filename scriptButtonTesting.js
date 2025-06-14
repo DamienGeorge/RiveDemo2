@@ -22,6 +22,7 @@ var spedUpDate = new Date();
 let lastToggledDate;
 const layoutToggleMap = new Map();
 let IsSpedUp = false;
+let audioContext = null;
 //#endregion
 
 //#region Constants
@@ -323,21 +324,55 @@ function SetLayoutH() {
     fireTrigger(LayoutHTriggerName);
 }
 
+// Initialize audio context on first user interaction
+function initAudioContext() {
+    if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+}
+
+// Add haptic feedback function
+function triggerHapticFeedback() {
+    // Try vibration first
+    if ('vibrate' in navigator) {
+        navigator.vibrate(200);
+        console.log("Vibration supported");
+        return;
+    }
+    
+    // Fallback to audio-based haptic feedback
+    try {
+        if (!audioContext) {
+            initAudioContext();
+        }
+        
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(100, audioContext.currentTime);
+        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+        
+        oscillator.start();
+        oscillator.stop(audioContext.currentTime + 0.1);
+        
+        console.log("Audio haptic feedback triggered");
+    } catch (error) {
+        console.log("Haptic feedback not supported:", error);
+    }
+}
+
 function fireTrigger(triggerName) {
     if (inputs) {
         const trigger = inputs.find(i => i.name === triggerName);
         console.log(trigger);
         trigger.fire();
         
-        // Add vibration feedback if supported
-        if ('vibrate' in navigator) {
-            // Short vibration for button press
-            navigator.vibrate(200);
-            console.log("Vibration supported");
-        }
-        else{
-            console.log("Vibration not supported");
-        }
+        // Trigger haptic feedback
+        triggerHapticFeedback();
     }
 }
 
@@ -487,3 +522,6 @@ const getCityFromCoords = async (lat, lon) => {
         data.results[0]?.components.county ||
         'Bangalore';
 };
+
+// Add event listener for user interaction to initialize audio context
+document.addEventListener('click', initAudioContext, { once: true });
