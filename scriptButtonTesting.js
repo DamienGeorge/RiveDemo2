@@ -176,7 +176,7 @@ try {
                 minuteInput.value = minute;
                 hourInput.value = hour;
                 secondInput.value = date.getSeconds()/100;
-                minSecInput.value = minute + ((new Date()).getSeconds()/100);
+                minSecInput.value = minute + (date.getSeconds()/100);
                 console.log("MinSec", minSecInput.value);
 
                 yearInput.value = date.getFullYear();
@@ -328,6 +328,12 @@ function fireTrigger(triggerName) {
         const trigger = inputs.find(i => i.name === triggerName);
         console.log(trigger);
         trigger.fire();
+        
+        // Add vibration feedback if supported
+        if ('vibrate' in navigator) {
+            // Short vibration for button press
+            navigator.vibrate(50);
+        }
     }
 }
 
@@ -462,6 +468,7 @@ function setSpeed(newSpeed) {
 
 function speedUpTime() {
     spedUpDate.setMinutes(spedUpDate.getMinutes() + 1);
+    spedUpDate.setSeconds(spedUpDate.getSeconds() + 1);
     window.speedUpTimeout = setTimeout(speedUpTime, timeout);
 }
 
