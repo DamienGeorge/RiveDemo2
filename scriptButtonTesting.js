@@ -92,7 +92,7 @@ try {
         .addEventListener("change", computeSize);
 
     riveInstance = new rive.Rive({
-        src: 'time_main_r7.riv',
+        src: 'time_main_r8.riv',
         canvas: canvas,
         autoplay: true,
         autoBind: true,
@@ -182,7 +182,6 @@ try {
 
                 minuteInput.value = minute;
                 hourInput.value = hour;
-                secondInput.value = date.getSeconds()/100;
                 console.log("MinSec", minSecInput.value);
 
                 yearInput.value = date.getFullYear();
