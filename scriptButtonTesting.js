@@ -142,7 +142,7 @@ try {
                                     console.log('Geolocation is not available, using IP-based location', data.city);
                                     location.value = data.city;
                                 } catch (error) {
-                                    console.log('Error Getting Location'); // Fallback to London if IP location fails
+                                   location.value = 'Bangalore';
                                 }
                             }
                         });
