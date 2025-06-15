@@ -265,10 +265,10 @@ function OnRiveEventTriggered(event) {
             fireTrigger(SwapDetailTriggerName);
             break;
         case 'W2 Sunny':
-            fireTrigger(SkySunnyTriggerName);
+            TriggerSunny();
             break;
         case 'W3 Rainy':
-            fireTrigger(SkyRainTriggerName);
+            TriggerRain();
             break;
         case 'Layout V':
             fireTrigger(LayoutVTriggerName);
@@ -307,6 +307,7 @@ function OnRiveEventTriggered(event) {
             } else {
                 isAutomaticMode = false;
                 SetLayoutH();
+                TriggerRain();
             }
             break;
         case 'Main/Detail Layout':
@@ -341,12 +342,10 @@ function toggleLayout(date) {
 
     //Add logic for sunny weather during day
     if (isSunny === false && date.getHours() >= 7 && date.getHours() <= 17) {
-        fireTrigger(SkySunnyTriggerName);
-        isSunny = true;
+        TriggerSunny();
     }
     else if (isSunny === true && (date.getHours() < 7 || date.getHours() > 17)) {
-        fireTrigger(SkyRainTriggerName);
-        isSunny = false;
+        TriggerRain();
     }
 
     /* if (date.getMinutes() % toggleInterval === 0 && !layoutToggleMap.has(currentMinute)) { */
@@ -405,6 +404,18 @@ function toggleLayout(date) {
 
         }
     }
+}
+
+function TriggerSunny() {
+    fireTrigger(SkySunnyTriggerName);
+    isSunny = true;
+    console.log('isSunny', isSunny);
+}
+
+function TriggerRain() {
+    fireTrigger(SkyRainTriggerName);
+    isSunny = false;
+    console.log('isSunny', isSunny);
 }
 
 function startAutoToggle(date) {
