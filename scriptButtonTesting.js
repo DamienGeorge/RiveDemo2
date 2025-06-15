@@ -39,6 +39,7 @@ const TrImages = 'Tr Images';
 const TrTransport = 'Tr Transport';
 const TrWeather = 'Tr Weather';
 const TrArrivals = 'Tr Arrivals';
+const InterpolationSpeedName = 'Interpolation speed';
 
 const LayoutVTriggerName = 'Tr Layout V';
 const LayoutHTriggerName = 'Tr Layout H';
@@ -157,7 +158,7 @@ try {
             const secondInput = viewModelInstance.number('Second Calc');
             const minSecInput = viewModelInstance.number('MinSec Calc');
             
-            interpolationSpeed = viewModelInstance.number('Interpolation Speed');
+            interpolationSpeed = viewModelInstance.number(InterpolationSpeedName);
             if(interpolationSpeed){
                 interpolationSpeed.value = 16500;
             }
