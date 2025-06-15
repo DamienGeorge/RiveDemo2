@@ -22,7 +22,7 @@ var spedUpDate = new Date();
 let lastToggledDate;
 const layoutToggleMap = new Map();
 let IsSpedUp = false;
-let minSecInput = null;
+let interpolationSpeed = null;
 //#endregion
 
 //#region Constants
@@ -155,9 +155,11 @@ try {
             const minuteInput = viewModelInstance.number('Minute Calc');
             const hourInput = viewModelInstance.number('Hour Calc');
             const secondInput = viewModelInstance.number('Second Calc');
-            minSecInput = viewModelInstance.number('MinSec Calc');
-            if(minSecInput){
-                minSecInput.value = 16500;
+            const minSecInput = viewModelInstance.number('MinSec Calc');
+            
+            interpolationSpeed = viewModelInstance.number('Interpolation Speed');
+            if(interpolationSpeed){
+                interpolationSpeed.value = 16500;
             }
 
             const yearInput = viewModelInstance.number('Year');
@@ -446,18 +448,18 @@ function setSpeed(newSpeed) {
         IsDemo = false;
         timeout = baseTimeout;
         IsSpedUp = false;
-        if(minSecInput){
-            minSecInput.value = 16500;
+        if(interpolationSpeed){
+            interpolationSpeed.value = 16500;
         }
     } else {
         IsDemo = true;
         timeout = (baseTimeout * multiplier) / speed;
 
         if(speed === 5){
-            minSecInput.value = 3300;
+            interpolationSpeed.value = 3300;
         }
         else if(speed === 10){
-            minSecInput.value = 1650;
+            interpolationSpeed.value = 1650;
         }
 
         if (!spedUpDate || IsSpedUp === false) {
