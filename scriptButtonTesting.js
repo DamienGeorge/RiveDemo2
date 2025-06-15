@@ -22,7 +22,7 @@ var spedUpDate = new Date();
 let lastToggledDate;
 const layoutToggleMap = new Map();
 let IsSpedUp = false;
-let audioContext = null;
+let minSecInput = null;
 //#endregion
 
 //#region Constants
@@ -155,7 +155,10 @@ try {
             const minuteInput = viewModelInstance.number('Minute Calc');
             const hourInput = viewModelInstance.number('Hour Calc');
             const secondInput = viewModelInstance.number('Second Calc');
-            const minSecInput = viewModelInstance.number('MinSec Calc');
+            minSecInput = viewModelInstance.number('MinSec Calc');
+            if(minSecInput){
+                minSecInput.value = 16500;
+            }
 
             const yearInput = viewModelInstance.number('Year');
             const monthInput = viewModelInstance.string('Month');
@@ -177,7 +180,6 @@ try {
                 minuteInput.value = minute;
                 hourInput.value = hour;
                 secondInput.value = date.getSeconds()/100;
-                minSecInput.value = minute + (date.getSeconds()/100);
                 console.log("MinSec", minSecInput.value);
 
                 yearInput.value = date.getFullYear();
@@ -324,55 +326,11 @@ function SetLayoutH() {
     fireTrigger(LayoutHTriggerName);
 }
 
-// Initialize audio context on first user interaction
-function initAudioContext() {
-    if (!audioContext) {
-        audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    }
-}
-
-// Add haptic feedback function
-function triggerHapticFeedback() {
-    // Try vibration first
-    if ('vibrate' in navigator) {
-        navigator.vibrate(200);
-        console.log("Vibration supported");
-        return;
-    }
-    
-    // Fallback to audio-based haptic feedback
-    try {
-        if (!audioContext) {
-            initAudioContext();
-        }
-        
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
-        
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        
-        oscillator.type = 'sine';
-        oscillator.frequency.setValueAtTime(100, audioContext.currentTime);
-        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-        
-        oscillator.start();
-        oscillator.stop(audioContext.currentTime + 0.1);
-        
-        console.log("Audio haptic feedback triggered");
-    } catch (error) {
-        console.log("Haptic feedback not supported:", error);
-    }
-}
-
 function fireTrigger(triggerName) {
     if (inputs) {
         const trigger = inputs.find(i => i.name === triggerName);
         console.log(trigger);
         trigger.fire();
-        
-        // Trigger haptic feedback
-        triggerHapticFeedback();
     }
 }
 
@@ -488,9 +446,19 @@ function setSpeed(newSpeed) {
         IsDemo = false;
         timeout = baseTimeout;
         IsSpedUp = false;
+        if(minSecInput){
+            minSecInput.value = 16500;
+        }
     } else {
         IsDemo = true;
         timeout = (baseTimeout * multiplier) / speed;
+
+        if(speed === 5){
+            minSecInput.value = 3300;
+        }
+        else if(speed === 10){
+            minSecInput.value = 1650;
+        }
 
         if (!spedUpDate || IsSpedUp === false) {
             spedUpDate = new Date();
@@ -507,7 +475,6 @@ function setSpeed(newSpeed) {
 
 function speedUpTime() {
     spedUpDate.setMinutes(spedUpDate.getMinutes() + 1);
-    spedUpDate.setSeconds(spedUpDate.getSeconds() + 1);
     window.speedUpTimeout = setTimeout(speedUpTime, timeout);
 }
 
@@ -522,6 +489,3 @@ const getCityFromCoords = async (lat, lon) => {
         data.results[0]?.components.county ||
         'Bangalore';
 };
-
-// Add event listener for user interaction to initialize audio context
-document.addEventListener('click', initAudioContext, { once: true });
