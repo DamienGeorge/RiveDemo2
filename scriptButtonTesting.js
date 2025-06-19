@@ -162,6 +162,7 @@ try {
             const monthInput = viewModelInstance.string('Month');
             const dayInput = viewModelInstance.string('Day');
             const dateInput = viewModelInstance.number('Date');
+            let incrementForSmoothening = 0;
 
             // --- Time/Date/Weather update function ---
             function updateRiveTimeAndWeather() {
@@ -180,8 +181,11 @@ try {
                         minSecInput.value = minute + date.getSeconds()/60;
                     }
                     else {
-                        minSecInput.value = minute + date.getSeconds()/60;
+                        minSecInput.value = minute + incrementForSmoothening/(timeout*60);
+                        incrementForSmoothening++;
                     }
+                }else{
+                    incrementForSmoothening = 0;
                 }
 
                 minuteInput.value = minute;
