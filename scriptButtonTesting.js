@@ -181,7 +181,7 @@ try {
                         minSecInput.value = minute + date.getSeconds()/60;
                     }
                     else {
-                        minSecInput.value = minute + incrementForSmoothening/(timeout*60);
+                        minSecInput.value = minute + incrementForSmoothening/100;
                         incrementForSmoothening++;
                     }
                 }else{
