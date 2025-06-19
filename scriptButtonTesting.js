@@ -23,11 +23,6 @@ let lastToggledDate;
 const layoutToggleMap = new Map();
 let IsSpedUp = false;
 let interpolationSpeed = null;
-
-// New variables for 100 intervals per minute
-let intervalCounter = 0;
-let intervalTimeout = null;
-const INTERVALS_PER_MINUTE = 100;
 //#endregion
 
 //#region Constants
@@ -185,12 +180,9 @@ try {
                         minSecInput.value = minute + date.getSeconds()/60;
                     }
                     else {
-                        // Calculate time with 100 intervals per minute
-                        const baseMinute = minute;
-                        const intervalProgress = intervalCounter / INTERVALS_PER_MINUTE;
-                        minSecInput.value = baseMinute + intervalProgress;
+                        minSecInput.value = minute + date.getSeconds()/60;
                     }
-                } 
+                }
 
                 minuteInput.value = minute;
                 hourInput.value = hour;
@@ -448,7 +440,6 @@ function setSpeed(newSpeed) {
         IsDemo = false;
         timeout = baseTimeout;
         IsSpedUp = false;
-        intervalCounter = 0; // Reset interval counter
        
     } else {
         IsDemo = true;
@@ -459,9 +450,6 @@ function setSpeed(newSpeed) {
             IsSpedUp = true;
         }
 
-        // Reset interval counter when starting speed-up
-        intervalCounter = 0;
-
         if (window.speedUpTimeout) {
             clearTimeout(window.speedUpTimeout);
         }
@@ -471,27 +459,8 @@ function setSpeed(newSpeed) {
 }
 
 function speedUpTime() {
-    const currentHour = spedUpDate.getHours();
-    
-    // Check if we're in the special time periods (6-7 AM or 6-7 PM)
-    if ((currentHour >= 6 && currentHour <= 7) || (currentHour >= 18 && currentHour <= 19)) {
-        // Use 100 intervals per minute
-        intervalCounter++;
-        
-        if (intervalCounter >= INTERVALS_PER_MINUTE) {
-            // Move to next minute
-            spedUpDate.setMinutes(spedUpDate.getMinutes() + 1);
-            intervalCounter = 0;
-        }
-        
-        // Calculate interval timeout based on speed
-        const intervalDuration = (timeout * 60) / INTERVALS_PER_MINUTE; // Distribute the minute across 100 intervals
-        window.speedUpTimeout = setTimeout(speedUpTime, intervalDuration);
-    } else {
-        // Outside special time periods, use normal speed-up
-        spedUpDate.setMinutes(spedUpDate.getMinutes() + 1);
-        window.speedUpTimeout = setTimeout(speedUpTime, timeout);
-    }
+    spedUpDate.setMinutes(spedUpDate.getMinutes() + 1);
+    window.speedUpTimeout = setTimeout(speedUpTime, timeout);
 }
 
 const apiKey = '600a572faf44492fa416286dccb577ca';
