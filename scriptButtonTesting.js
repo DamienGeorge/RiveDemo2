@@ -23,6 +23,11 @@ let lastToggledDate;
 const layoutToggleMap = new Map();
 let IsSpedUp = false;
 let interpolationSpeed = null;
+
+// New variables for 100 intervals per minute
+let intervalCounter = 0;
+let intervalTimeout = null;
+const INTERVALS_PER_MINUTE = 100;
 //#endregion
 
 //#region Constants
@@ -158,11 +163,6 @@ try {
             const secondInput = viewModelInstance.number('Second Calc');
             const minSecInput = viewModelInstance.number('MinSec Calc');
             
-            interpolationSpeed = viewModelInstance.number(InterpolationSpeedName);
-            if(interpolationSpeed){
-                interpolationSpeed.value = 16500;
-            }
-
             const yearInput = viewModelInstance.number('Year');
             const monthInput = viewModelInstance.string('Month');
             const dayInput = viewModelInstance.string('Day');
@@ -174,11 +174,23 @@ try {
                     date = spedUpDate;
                 } else {
                     date = new Date();
-                }
+                }                
 
                 // 24 hour clock
                 const minute = date.getMinutes();
                 const hour = date.getHours();
+
+                if(6<=hour && hour<=7 || 18<=hour && hour<=19){
+                    if(speed === 1){
+                        minSecInput.value = minute + date.getSeconds()/60;
+                    }
+                    else {
+                        // Calculate time with 100 intervals per minute
+                        const baseMinute = minute;
+                        const intervalProgress = intervalCounter / INTERVALS_PER_MINUTE;
+                        minSecInput.value = baseMinute + intervalProgress;
+                    }
+                } 
 
                 minuteInput.value = minute;
                 hourInput.value = hour;
@@ -188,29 +200,6 @@ try {
                 monthInput.value = date.toLocaleString('default', { month: 'long' });
                 dayInput.value = date.toLocaleString('default', { weekday: 'long' });
                 dateInput.value = date.getDate();
-
-                // Get weather data and update temperature
-               /*  const temperatureInput = viewModelInstance.number('Temperature');
-                if (storedPosition) { // Use stored position instead of requesting again
-                    const lastWeatherUpdate = localStorage.getItem('lastWeatherUpdate') || '0';
-                    const currentTime = new Date().getTime();
-                    temperatureInput.value = localStorage.getItem('temperature');
-                    if (!lastWeatherUpdate || (currentTime - parseInt(lastWeatherUpdate)) >= 300000) { // 300000ms = 5 minutes
-                        fetch(`https://api.open-meteo.com/v1/forecast?latitude=${storedPosition.coords.latitude}&longitude=${storedPosition.coords.longitude}&current=temperature_2m`)
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data && data.current && data.current.temperature_2m) {
-                                    const temp = Math.round(data.current.temperature_2m);
-                                    temperatureInput.value = temp;
-                                    localStorage.setItem('lastWeatherUpdate', currentTime.toString());
-                                    localStorage.setItem('temperature', temp);
-                                }
-                            })
-                            .catch(error => {
-                                console.log('Error fetching weather data:', error);
-                            });
-                    }
-                } */
 
                 // Only call toggleLayout in automatic mode
                 if (isAutomaticMode) {
@@ -459,24 +448,19 @@ function setSpeed(newSpeed) {
         IsDemo = false;
         timeout = baseTimeout;
         IsSpedUp = false;
-        if(interpolationSpeed){
-            interpolationSpeed.value = 16500;
-        }
+        intervalCounter = 0; // Reset interval counter
+       
     } else {
         IsDemo = true;
         timeout = (baseTimeout * multiplier) / speed;
-
-        if(speed === 5){
-            interpolationSpeed.value = 3300;
-        }
-        else if(speed === 10){
-            interpolationSpeed.value = 1650;
-        }
 
         if (!spedUpDate || IsSpedUp === false) {
             spedUpDate = new Date();
             IsSpedUp = true;
         }
+
+        // Reset interval counter when starting speed-up
+        intervalCounter = 0;
 
         if (window.speedUpTimeout) {
             clearTimeout(window.speedUpTimeout);
@@ -487,8 +471,27 @@ function setSpeed(newSpeed) {
 }
 
 function speedUpTime() {
-    spedUpDate.setMinutes(spedUpDate.getMinutes() + 1);
-    window.speedUpTimeout = setTimeout(speedUpTime, timeout);
+    const currentHour = spedUpDate.getHours();
+    
+    // Check if we're in the special time periods (6-7 AM or 6-7 PM)
+    if ((currentHour >= 6 && currentHour <= 7) || (currentHour >= 18 && currentHour <= 19)) {
+        // Use 100 intervals per minute
+        intervalCounter++;
+        
+        if (intervalCounter >= INTERVALS_PER_MINUTE) {
+            // Move to next minute
+            spedUpDate.setMinutes(spedUpDate.getMinutes() + 1);
+            intervalCounter = 0;
+        }
+        
+        // Calculate interval timeout based on speed
+        const intervalDuration = (timeout * 60) / INTERVALS_PER_MINUTE; // Distribute the minute across 100 intervals
+        window.speedUpTimeout = setTimeout(speedUpTime, intervalDuration);
+    } else {
+        // Outside special time periods, use normal speed-up
+        spedUpDate.setMinutes(spedUpDate.getMinutes() + 1);
+        window.speedUpTimeout = setTimeout(speedUpTime, timeout);
+    }
 }
 
 const apiKey = '600a572faf44492fa416286dccb577ca';
