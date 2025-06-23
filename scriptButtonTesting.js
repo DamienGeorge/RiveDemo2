@@ -23,6 +23,7 @@ let lastToggledDate;
 const layoutToggleMap = new Map();
 let IsSpedUp = false;
 let interpolationSpeed = null;
+let incrementForSmoothening = 0;
 //#endregion
 
 //#region Constants
@@ -92,7 +93,7 @@ try {
         .addEventListener("change", computeSize);
 
     riveInstance = new rive.Rive({
-        src: 'time_main_r8.riv',
+        src: 'time_main_r9.riv',
         canvas: canvas,
         autoplay: true,
         autoBind: true,
@@ -142,7 +143,7 @@ try {
                                     console.log('Geolocation is not available, using IP-based location', data.city);
                                     location.value = data.city;
                                 } catch (error) {
-                                   location.value = 'Bangalore';
+                                    location.value = 'Bangalore';
                                 }
                             }
                         });
@@ -155,18 +156,27 @@ try {
 
             const minuteInput = viewModelInstance.number('Minute Calc');
             const hourInput = viewModelInstance.number('Hour Calc');
-            const secondInput = viewModelInstance.number('Second Calc');
+            const secondInput = viewModelInstance.number('Seconds Calc');
             const minSecInput = viewModelInstance.number('MinSec Calc');
-            
-            interpolationSpeed = viewModelInstance.number(InterpolationSpeedName);
-            if(interpolationSpeed){
-                interpolationSpeed.value = 16500;
-            }
+            const currentSecond = viewModelInstance.number('Current Second');
 
             const yearInput = viewModelInstance.number('Year');
             const monthInput = viewModelInstance.string('Month');
             const dayInput = viewModelInstance.string('Day');
             const dateInput = viewModelInstance.number('Date');
+
+            let timerStarted = false;
+
+
+           /*  function runSmoothening() {
+                if (incrementForSmoothening < 60) {
+                    console.log("Current Sped Up Second", incrementForSmoothening++);
+                }
+                else {
+                    incrementForSmoothening = 0;
+                }
+                window.smootheningIntervalId = setInterval(runSmoothening, timeout / 60);
+            } */
 
             // --- Time/Date/Weather update function ---
             function updateRiveTimeAndWeather() {
@@ -182,35 +192,38 @@ try {
 
                 minuteInput.value = minute;
                 hourInput.value = hour;
+
+                console.log("Minute", minuteInput.value);
+                console.log("Hour", hourInput.value);
+                console.log("Second", secondInput.value);
                 console.log("MinSec", minSecInput.value);
+
+               /*  if (6 === hour || 18 === hour) {
+                    if (speed === 1) {
+                         minSecInput.value = minute + date.getSeconds() / 60;
+                        console.log("Current Seconds", date.getSeconds());
+                    }
+                    else {
+                        if (timerStarted === false) {
+                            incrementForSmoothening = 0;
+                            timerStarted = true;
+                            console.log('beginning smoothening');
+                            runSmoothening();
+                        }
+                    }
+                }
+                else if (timerStarted && (hour === 7 || hour === 19)) {
+                    if (speed !== 1) {
+                        timerStarted = false;
+                        console.log('clearing interval', window.smootheningIntervalId);
+                        clearInterval(window.smootheningIntervalId);
+                    }
+                } */
 
                 yearInput.value = date.getFullYear();
                 monthInput.value = date.toLocaleString('default', { month: 'long' });
                 dayInput.value = date.toLocaleString('default', { weekday: 'long' });
                 dateInput.value = date.getDate();
-
-                // Get weather data and update temperature
-               /*  const temperatureInput = viewModelInstance.number('Temperature');
-                if (storedPosition) { // Use stored position instead of requesting again
-                    const lastWeatherUpdate = localStorage.getItem('lastWeatherUpdate') || '0';
-                    const currentTime = new Date().getTime();
-                    temperatureInput.value = localStorage.getItem('temperature');
-                    if (!lastWeatherUpdate || (currentTime - parseInt(lastWeatherUpdate)) >= 300000) { // 300000ms = 5 minutes
-                        fetch(`https://api.open-meteo.com/v1/forecast?latitude=${storedPosition.coords.latitude}&longitude=${storedPosition.coords.longitude}&current=temperature_2m`)
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data && data.current && data.current.temperature_2m) {
-                                    const temp = Math.round(data.current.temperature_2m);
-                                    temperatureInput.value = temp;
-                                    localStorage.setItem('lastWeatherUpdate', currentTime.toString());
-                                    localStorage.setItem('temperature', temp);
-                                }
-                            })
-                            .catch(error => {
-                                console.log('Error fetching weather data:', error);
-                            });
-                    }
-                } */
 
                 // Only call toggleLayout in automatic mode
                 if (isAutomaticMode) {
@@ -240,7 +253,6 @@ try {
 } catch (error) {
     console.error('Error initializing Rive:', error);
 }
-
 
 // Handle window resize
 window.addEventListener('resize', () => {
@@ -356,7 +368,7 @@ function toggleLayout(date) {
             layoutToggleMap.clear();
             layoutToggleMap.set(currentMinute, true);
 
-            if (currentMinute === 7 || currentMinute === 17 || currentMinute === 27 || currentMinute === 37 || currentMinute === 53) {
+            if (currentMinute === 7 || currentMinute === 17 || currentMinute === 27 || currentMinute === 39 || currentMinute === 53) {
                 fireTrigger(LayoutHTriggerName);
                 isStandardLayout = true;
             }
@@ -377,7 +389,7 @@ function toggleLayout(date) {
                         fireTrigger(TrTransport);
                         isStandardLayout = false;
                         break;
-                    case 32:
+                    case 31:
                         fireTrigger(TrArrivals);
                         isStandardLayout = false;
                         break;
@@ -459,19 +471,10 @@ function setSpeed(newSpeed) {
         IsDemo = false;
         timeout = baseTimeout;
         IsSpedUp = false;
-        if(interpolationSpeed){
-            interpolationSpeed.value = 16500;
-        }
+
     } else {
         IsDemo = true;
         timeout = (baseTimeout * multiplier) / speed;
-
-        if(speed === 5){
-            interpolationSpeed.value = 3300;
-        }
-        else if(speed === 10){
-            interpolationSpeed.value = 1650;
-        }
 
         if (!spedUpDate || IsSpedUp === false) {
             spedUpDate = new Date();
