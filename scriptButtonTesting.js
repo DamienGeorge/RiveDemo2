@@ -113,7 +113,6 @@ try {
             const location = viewModelInstance.string('City Name');
 
             inputs = riveInstance.stateMachineInputs(stateMachine);
-            console.log(inputs);
 
             //Location logic
             if (navigator.geolocation) {
@@ -193,11 +192,6 @@ try {
                 minuteInput.value = minute;
                 hourInput.value = hour;
 
-                console.log("Minute", minuteInput.value);
-                console.log("Hour", hourInput.value);
-                console.log("Second", secondInput.value);
-                console.log("MinSec", minSecInput.value);
-
                /*  if (6 === hour || 18 === hour) {
                     if (speed === 1) {
                          minSecInput.value = minute + date.getSeconds() / 60;
@@ -265,7 +259,6 @@ window.addEventListener('resize', () => {
 });
 
 function OnRiveEventTriggered(event) {
-    console.log(event.data.name);
     switch (event.data.name) {
         case 'Weather':
             fireTrigger(EnableWeatherEffectsTriggerName);
@@ -308,12 +301,10 @@ function OnRiveEventTriggered(event) {
             break;
         case 'Speed':
             const sliderSpeed = consoleInputs.find(i => i.name === 'Slider speed')
-            console.log(sliderSpeed);
             updateSpeedSwitch(sliderSpeed.value);
             break;
         case 'Auto/Manual':
             const isAutoInput = consoleInputs.find(i => i.name === 'isAuto')
-            console.log(isAutoInput.value);
             if (isAutoInput.value) {
                 isAutomaticMode = true;
             } else {
@@ -324,7 +315,6 @@ function OnRiveEventTriggered(event) {
             break;
         case 'Main/Detail Layout':
             const mainDetailLayoutInput = consoleInputs.find(i => i.name === 'isMain')
-            console.log(mainDetailLayoutInput.value);
             if (mainDetailLayoutInput.value) {
                 isStandardLayout = true;
                 fireTrigger(LayoutHTriggerName);
@@ -344,7 +334,6 @@ function SetLayoutH() {
 function fireTrigger(triggerName) {
     if (inputs) {
         const trigger = inputs.find(i => i.name === triggerName);
-        console.log(trigger);
         trigger.fire();
     }
 }
@@ -364,7 +353,6 @@ function toggleLayout(date) {
     if (!layoutToggleMap.has(currentMinute)) {
         if (IsDemo || (IsDemo == false && date.getSeconds() === 0)) {
 
-            console.log(isStandardLayout);
             layoutToggleMap.clear();
             layoutToggleMap.set(currentMinute, true);
 
@@ -421,13 +409,11 @@ function toggleLayout(date) {
 function TriggerSunny() {
     fireTrigger(SkySunnyTriggerName);
     isSunny = true;
-    console.log('isSunny', isSunny);
 }
 
 function TriggerRain() {
     fireTrigger(SkyRainTriggerName);
     isSunny = false;
-    console.log('isSunny', isSunny);
 }
 
 function startAutoToggle(date) {
@@ -486,7 +472,6 @@ function setSpeed(newSpeed) {
         }
         setTimeout(speedUpTime);
     }
-    console.log('speed', speed);
 }
 
 function speedUpTime() {
