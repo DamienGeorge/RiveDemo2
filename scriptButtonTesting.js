@@ -452,6 +452,11 @@ updateSpeedSwitch(0);
 
 function setSpeed(newSpeed) {
     speed = newSpeed;
+    
+    //Clear the timeout if it exists
+    if (window.speedUpTimeout) {
+        clearTimeout(window.speedUpTimeout);
+    }
 
     if (speed === 1) {
         IsDemo = false;
@@ -467,9 +472,6 @@ function setSpeed(newSpeed) {
             IsSpedUp = true;
         }
 
-        if (window.speedUpTimeout) {
-            clearTimeout(window.speedUpTimeout);
-        }
         setTimeout(speedUpTime);
     }
 }
